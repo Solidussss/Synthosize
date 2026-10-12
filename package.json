@@ -1,0 +1,1 @@
+{"name":"synthosize-visual-studio","version":"0.1.0","private":true,"description":"Local beat-synchronized scene studio — functional proof of concept","main":"desktop/main.cjs","scripts":{"start":"electron .","test":"python -m unittest discover -s tests -v"},"devDependencies":{"electron":"^42.0.0"}}

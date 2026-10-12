@@ -1,0 +1,11 @@
+.git
+node_modules
+.venv
+__pycache__
+**/__pycache__
+*.pyc
+.env*
+tests
+docs
+examples/*.mp4
+examples/*.zip

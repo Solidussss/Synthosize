@@ -1,0 +1,1 @@
+"""Synthosize Visual Studio engine."""
