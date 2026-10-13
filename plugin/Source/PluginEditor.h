@@ -14,5 +14,6 @@ private:
     juce::Label title;
     juce::Label transport;
     juce::Label explanation;
+    juce::DatagramSocket transportSocket { false };
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SynthosizeEditor)
 };
