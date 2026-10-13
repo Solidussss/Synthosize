@@ -47,6 +47,15 @@ void SynthosizeEditor::timerCallback()
     const auto bpm = processor.hostBpm.load(std::memory_order_relaxed);
     const auto ppq = processor.hostPpq.load(std::memory_order_relaxed);
     const bool playing = processor.hostPlaying.load(std::memory_order_relaxed);
+    // Send host timing to the local desktop editor. Never do network I/O on
+    // FL Studio's realtime audio thread; this timer runs on the UI thread.
+    // Only loopback transport metadata is sent, never audio or media files.
+    const auto state = juce::String::formatted(
+        "{\\"bpm\\":%.6f,\\"ppq\\":%.6f,\\"playing\\":%s}",
+        bpm, ppq, playing ? "true" : "false");
+    transportSocket.write("127.0.0.1", 48383, state.toRawUTF8(),
+                          static_cast<int>(state.getNumBytesAsUTF8()));
+
     transport.setText(juce::String(bpm, 1) + " BPM   |   Beat " +
         juce::String(ppq, 2) + "   |   " + (playing ? "PLAYING" : "STOPPED"),
         juce::dontSendNotification);
