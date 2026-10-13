@@ -51,7 +51,7 @@ void SynthosizeEditor::timerCallback()
     // FL Studio's realtime audio thread; this timer runs on the UI thread.
     // Only loopback transport metadata is sent, never audio or media files.
     const auto state = juce::String::formatted(
-        "{\\"bpm\\":%.6f,\\"ppq\\":%.6f,\\"playing\\":%s}",
+        "{\"bpm\":%.6f,\"ppq\":%.6f,\"playing\":%s}",
         bpm, ppq, playing ? "true" : "false");
     transportSocket.write("127.0.0.1", 48383, state.toRawUTF8(),
                           static_cast<int>(state.getNumBytesAsUTF8()));
