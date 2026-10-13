@@ -7,12 +7,12 @@ import time
 PORT = 48383
 
 class HostBridge:
-    def __init__(self):
+    def __init__(self, port=PORT):
         self._lock = threading.Lock()
         self._last = None
         self._received = 0.0
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self._socket.bind(("127.0.0.1", PORT))
+        self._socket.bind(("127.0.0.1", port))
         threading.Thread(target=self._receive, daemon=True, name="synthosize-host-bridge").start()
 
     def _receive(self):
@@ -34,6 +34,9 @@ class HostBridge:
                 continue
             except OSError:
                 break
+
+    def close(self):
+        self._socket.close()
 
     def snapshot(self):
         with self._lock:
