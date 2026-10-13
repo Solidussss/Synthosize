@@ -2,8 +2,7 @@
 
 This is an **early source-code scaffold, not a finished plugin binary**.
 It reads BPM, PPQ song position, and play/stop state through the official
-VST3 host interface and leaves the incoming audio unchanged. No connection
-to the scene editor is implemented yet.
+VST3 host interface and leaves the incoming audio unchanged. A localhost-only tempo bridge now sends host timing to the local Synthosize editor. The editor has a manual **Use FL BPM** button. Automatic timeline following, preview synchronization, and in-plugin video rendering are not implemented yet.
 
 ## Build (developer machine)
 
@@ -25,15 +24,13 @@ the standard system location is `C:\\Program Files\\Common Files\\VST3\\`.
 - Host BPM, musical PPQ position, and play/stop indication.
 - Stereo audio passthrough (no effects or synthesis).
 - Basic plugin GUI.
-- No external network calls, no scene editing or video export in-plugin.
+- Loopback UDP transport metadata to the local editor on port 48383; no media/audio transmission.
+- Manual import of the FL Studio BPM into the local scene editor.
+- No scene editing or video export in-plugin.
 
 ## Next milestone
 
-Build a localhost-only bridge between this plugin and the existing
-desktop scene editor. Keep network I/O off the realtime audio thread.
-Pass host timing into the visual engine, add connection status and
-an explicit open-editor action, then test with a real FL Studio session
-on macOS and Windows. Keep the Railway hosted editor separate.
+Complete and validate the local bridge on real FL Studio sessions: test Windows and macOS VST3 compilation, add editor connection status, open-editor action, and opt-in live transport follow. Keep network I/O off the realtime audio thread. Never imply sample-accurate visual synchronization before measuring it. Keep the Railway hosted editor separate.
 Do not claim sample-accurate video synchronization until measured.
 
 Do not upload unlicensed clips for public distribution; the tool edits
