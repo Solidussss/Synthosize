@@ -21,6 +21,8 @@ juce_add_plugin(SynthosizeFL
   IS_MIDI_EFFECT FALSE
   COPY_PLUGIN_AFTER_BUILD FALSE)
 
+juce_generate_juce_header(SynthosizeFL)
+
 target_sources(SynthosizeFL PRIVATE
   Source/PluginProcessor.cpp
   Source/PluginEditor.cpp)
