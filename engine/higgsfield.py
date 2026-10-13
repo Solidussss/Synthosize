@@ -68,8 +68,11 @@ def main():
     parser.add_argument("--duration", type=int, default=5)
     parser.add_argument("--resolution", choices=("480p", "720p", "1080p"), default="720p")
     parser.add_argument("--submit", action="store_true", help="Explicitly authorize a paid video generation")
+    parser.add_argument("--dry-run", action="store_true", help="Preview a request without submitting (default)")
     parser.add_argument("--status", help="Check a request without starting another generation")
     args = parser.parse_args()
+    if args.dry_run and args.submit:
+        parser.error("--dry-run and --submit cannot be combined")
     if args.status:
         result = check_status(args.status)
     else:
