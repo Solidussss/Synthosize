@@ -4,11 +4,14 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlparse, parse_qs, unquote
 from .core import Studio, default_scene
+from .host_bridge import HostBridge
 
 UI=Path(__file__).resolve().parents[1]/'ui'
 
 def serve(root,port=0,open_browser=False):
     studio=Studio(root); token=secrets.token_urlsafe(32); jobs={}; export_lock=threading.Lock()
+    try: host_bridge=HostBridge()
+    except OSError: host_bridge=None  # Another local editor owns the host bridge port.
     class Handler(BaseHTTPRequestHandler):
         def log_message(self,*args): pass
         def reply(self,code,data,ctype='application/json'):
@@ -55,6 +58,8 @@ def serve(root,port=0,open_browser=False):
                     try: recovery=json.loads((studio.root/'recovery.json').read_text())
                     except (OSError,ValueError): pass
                     return self.reply(200,{'token':token,'scenes':studio.scenes(),'scene':default_scene(),'recovery':recovery,'root':str(studio.root),'ffmpeg':bool(shutil.which('ffmpeg'))})
+                if path=='/api/host':
+                    return self.reply(200,host_bridge.snapshot() if host_bridge else {'connected':False})
                 if path=='/api/assets':
                     items=[]
                     for p in (studio.root/'assets').glob('*/meta.json'):
