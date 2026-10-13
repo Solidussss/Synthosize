@@ -53,3 +53,15 @@ window.addEventListener('resize',()=>{dirty=true;drawWave()});window.addEventLis
 safe(async()=>{const state=await api('state');token=state.token;if(state.hosted){$('privacyNote').textContent='Uploads and scenes are stored in your private Railway workspace.';$('engineLabel').textContent='HOSTED ENGINE';$('logout').hidden=false;}await refresh();let recovered;try{recovered=JSON.parse(localStorage.getItem('synthosize-recovery'))}catch{}recovered=state.recovery||recovered;await load(recovered?.version===1?recovered:state.scenes[0]||state.scene);if(recovered){changed=true;$('saved').textContent='recovered';status('Recovered unsaved scene edits.')}if(!state.ffmpeg)status('FFmpeg is missing. Install it before importing media.',true);requestAnimationFrame(tick)})();
 
 $('logout').onclick=safe(async()=>{pause();clearTimeout(recoveryTimer);if(changed)await api('save',{scene});await api('logout',{});localStorage.removeItem('synthosize-recovery');location.href='/login'});
+
+ 
+// Manual host-tempo import: no surprise changes to the user's scene.
+// Only the local desktop server exposes the host bridge; Railway does not.
+$('syncFL').onclick=safe(async()=>{
+  const host=await api('host');
+  if(!host.connected)throw Error('No local FL Studio plugin detected. Open the VST3 in FL Studio and keep the desktop editor running.');
+  scene.bpm=host.bpm;
+  $('bpm').value=host.bpm.toFixed(2);
+  mark();
+  status('Imported '+host.bpm.toFixed(2)+' BPM from FL Studio.');
+});
