@@ -1,0 +1,42 @@
+name: Build Synthosize VST3
+
+on:
+  push:
+    branches:
+      - feature/fl-studio-vst3-foundation
+    paths:
+      - 'plugin/**'
+      - '.github/workflows/build-vst3.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: VST3 (${{ matrix.label }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-2022
+            label: Windows
+          - os: macos-14
+            label: macOS-AppleSilicon
+          - os: macos-15-intel
+            label: macOS-Intel
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Check out Synthosize
+        uses: actions/checkout@v4
+      - name: Configure VST3
+        run: cmake -S plugin -B plugin/build -DCMAKE_BUILD_TYPE=Release -DJUCE_BUILD_EXTRAS=OFF -DJUCE_BUILD_EXAMPLES=OFF
+      - name: Compile VST3
+        run: cmake --build plugin/build --config Release --parallel 2
+      - name: Upload unsigned plugin package
+        uses: actions/upload-artifact@v4
+        with:
+          name: Synthosize-VST3-${{ matrix.label }}
+          path: plugin/build/SynthosizeFL_artefacts/**/VST3/*.vst3/**
+          if-no-files-found: error
+          retention-days: 14
